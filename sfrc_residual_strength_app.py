@@ -119,16 +119,6 @@ with st.sidebar.expander("Model validity ranges & fibre type (read before use)",
 
 st.sidebar.markdown("---")
 
-with st.sidebar.expander("Validated limits (fixed)", expanded=False):
-    st.markdown(
-        """
-- $f_c$: **22 to 79 MPa** (or $f_{cu}$ converted using $f_c = 0.82\,f_{cu}$)
-- $V_f$: **0.2% to 2.0%**
-- $\lambda_f = l_f/d_f$: **38 to 100**
-- $f_{fu}$: **1000 to 3200 MPa** (only for $f_{R,3}$)
-        """
-    )
-
 
 # -----------------------------
 # Page: Calculator
@@ -240,7 +230,7 @@ if page == "🧮 Calculator":
 
                 with st.container(border=True):
                     st.markdown(r"## $f_{R,1}$")
-                    st.metric(r"Mean prediction $f_{R,1}^{\mathrm{pred}}$ (MPa)", f"{pred1:.3f}")
+                    st.metric(r"Mean prediction $f_{R,1m}^{\mathrm{pred}}$ (MPa)", f"{pred1:.3f}")
                     cA, cB = st.columns(2)
                     cA.metric(r"Characteristic $f_{R,1k}$ (MPa)", f"{f1k:.3f}")
                     cB.metric(r"Design $f_{R,1d}$ (MPa)", f"{f1d:.3f}")
@@ -266,7 +256,7 @@ if page == "🧮 Calculator":
 
                 with st.container(border=True):
                     st.markdown(r"## $f_{R,3}$")
-                    st.metric(r"Mean prediction $f_{R,3}^{\mathrm{pred}}$ (MPa)", f"{pred3:.3f}")
+                    st.metric(r"Mean prediction $f_{R,3m}^{\mathrm{pred}}$ (MPa)", f"{pred3:.3f}")
                     cA, cB = st.columns(2)
                     cA.metric(r"Characteristic $f_{R,3k}$ (MPa)", f"{f3k:.3f}")
                     cB.metric(r"Design $f_{R,3d}$ (MPa)", f"{f3d:.3f}")
