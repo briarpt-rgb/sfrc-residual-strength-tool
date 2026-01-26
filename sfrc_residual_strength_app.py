@@ -12,9 +12,10 @@ st.set_page_config(
 PARAMS_FR1 = dict(a=6.939, b=0.448, c=0.377, d=0.265, const=-3.823)
 PARAMS_FR3 = dict(a=12.000, b=0.613, c=0.370, d=0.247, e=0.411, f=0.313, const=-1.506)
 
+# Reliability-based scaling (EN 1990 Annex C calibration; Code 2)
 SCALE = {
-    "fR1": {"k_char": 0.67, "k_design": 0.51, "gamma": 1.33},
-    "fR3": {"k_char": 0.62, "k_design": 0.45, "gamma": 1.40},
+    "fR1": {"k_char": 0.67, "k_design": 0.49, "gamma": 1.36},
+    "fR3": {"k_char": 0.62, "k_design": 0.43, "gamma": 1.45},
 }
 
 # -----------------------------
@@ -25,6 +26,11 @@ VF_PCT_MIN, VF_PCT_MAX = 0.2, 2.0    # percent
 VF_DEC_MIN, VF_DEC_MAX = 0.002, 0.02 # decimal
 LAMBDA_MIN, LAMBDA_MAX = 38.0, 100.0 # lf/df
 FFU_MIN, FFU_MAX = 1000.0, 3200.0   # MPa
+
+# Fibre type note (must match dataset used for calibration)
+FIBRE_TYPE_NOTE = (
+    "3D Hooked-end steel fibres (as in the experimental dataset used for model development/calibration)."
+)
 
 # fc - fcu conversion (rough)
 FC_FROM_FCU = 0.82
@@ -80,6 +86,39 @@ strength_mode = st.sidebar.radio(
 
 allow_extrap = st.sidebar.checkbox("Allow extrapolation", value=True)
 
+# -----------------------------
+# Mandatory disclaimer + scope message (professor comment)
+# -----------------------------
+st.sidebar.markdown("---")
+st.sidebar.subheader("Important notice (scope & limitations)")
+
+st.sidebar.warning(
+    "This application is provided **for scientific/research use only**. "
+    "It is **not intended for structural design** or safety-critical decisions. "
+    "Users remain responsible for verifying applicability, assumptions, and compliance with relevant standards."
+)
+
+st.sidebar.info(
+    "The prediction models were developed and calibrated using data within specific variable ranges and for a specific "
+    "fibre type. Using inputs outside these ranges or a different fibre type may lead to **incorrect predictions**."
+)
+
+with st.sidebar.expander("Model validity ranges & fibre type (read before use)", expanded=True):
+    st.markdown(
+        rf"""
+**Variable ranges used in model development/calibration:**
+- $f_c$: **{FC_MIN:.0f} to {FC_MAX:.0f} MPa** (or $f_{{cu}}$ converted using $f_c = 0.82\,f_{{cu}}$)
+- $V_f$: **{VF_PCT_MIN:.1f}\% to {VF_PCT_MAX:.1f}\%** (decimal **{VF_DEC_MIN:.3f} to {VF_DEC_MAX:.3f}**)
+- $\lambda_f = l_f/d_f$: **{LAMBDA_MIN:.0f} to {LAMBDA_MAX:.0f}**
+- $f_{{fu}}$: **{FFU_MIN:.0f} to {FFU_MAX:.0f} MPa** (only for $f_{{R,3}}$)
+
+**Fibre type considered:**
+- {FIBRE_TYPE_NOTE}
+        """
+    )
+
+st.sidebar.markdown("---")
+
 with st.sidebar.expander("Validated limits (fixed)", expanded=False):
     st.markdown(
         """
@@ -95,8 +134,14 @@ with st.sidebar.expander("Validated limits (fixed)", expanded=False):
 # Page: Calculator
 # -----------------------------
 if page == "🧮 Calculator":
-    st.title("SFRC residual flexural strengths")
+    st.title("SFRC Residual Flexural Strengths")
     st.markdown("Compute $f_{R,1}$ and $f_{R,3}$ (mean, characteristic, design).")
+
+    # Optional on-page banner too (more visible than sidebar only)
+    st.warning(
+        "Research use only. "
+        "Predictions are valid only within the stated ranges and for 3D hooked-end steel fibres."
+    )
 
     left, right = st.columns([1.05, 0.95], gap="large")
 
@@ -255,23 +300,23 @@ else:
     st.subheader("Mean prediction models")
 
     st.markdown(r"### $f_{R,1}$")
-    st.latex(r"f_{R,1}^{\mathrm{pred}} = 6.939\, V_f^{0.448}\, \left(\frac{l_f}{d_f}\right)^{0.377}\, f_c^{0.265} - 3.823")
+    st.latex(r"f_{R,1m}^{\mathrm{pred}} = 6.939\, V_f^{0.448}\, \left(\frac{l_f}{d_f}\right)^{0.377}\, f_c^{0.265} - 3.823")
 
     st.markdown(r"### $f_{R,3}$")
     st.latex(r"f_{fu}^* = \frac{f_{fu}}{1000}\qquad l_f^* = \frac{l_f}{50}")
     st.latex(
-        r"f_{R,3}^{\mathrm{pred}} = 12.000\, V_f^{0.613}\, \left(\frac{l_f}{d_f}\right)^{0.370}\, f_c^{0.247}\, (f_{fu}^*)^{0.411}\, (l_f^*)^{0.313} - 1.506"
+        r"f_{R,3m}^{\mathrm{pred}} = 12.000\, V_f^{0.613}\, \left(\frac{l_f}{d_f}\right)^{0.370}\, f_c^{0.247}\, (f_{fu}^*)^{0.411}\, (l_f^*)^{0.313} - 1.506"
     )
 
     st.subheader("Characteristic and design values")
 
     st.markdown(r"### $f_{R,1}$")
-    st.latex(r"f_{R,1k} = 0.67\, f_{R,1}^{\mathrm{pred}}\qquad f_{R,1d} = 0.51\, f_{R,1}^{\mathrm{pred}}")
-    st.latex(r"\gamma_{fR,1} = 1.33")
+    st.latex(r"f_{R,1k} = 0.67\, f_{R,1}^{\mathrm{pred}}\qquad f_{R,1d} = 0.49\, f_{R,1}^{\mathrm{pred}}")
+    st.latex(r"\gamma_{fR,1} = 1.36")
 
     st.markdown(r"### $f_{R,3}$")
-    st.latex(r"f_{R,3k} = 0.62\, f_{R,3}^{\mathrm{pred}}\qquad f_{R,3d} = 0.45\, f_{R,3}^{\mathrm{pred}}")
-    st.latex(r"\gamma_{fR,3} = 1.40")
+    st.latex(r"f_{R,3k} = 0.62\, f_{R,3}^{\mathrm{pred}}\qquad f_{R,3d} = 0.43\, f_{R,3}^{\mathrm{pred}}")
+    st.latex(r"\gamma_{fR,3} = 1.45")
 
     st.subheader("Input formats")
     st.markdown(
@@ -283,13 +328,20 @@ else:
         """
     )
 
-    st.subheader("Validated limits")
+    st.subheader("Validated limits and fibre type")
     st.markdown(
         r"""
+**Model validity ranges (dataset-based):**
 - $f_c$: **22 to 79 MPa**
 - $V_f$: **0.2% to 2.0%**
 - $\lambda_f=l_f/d_f$: **38 to 100**
 - $f_{fu}$: **1000 to 3200 MPa** (only for $f_{R,3}$)
+
+**Fibre type considered:**
+- 3D Hooked-end steel fibres (as in the experimental dataset used for model development/calibration).
+
+**Use limitation:**
+- This application is provided **for scientific/research use only** and is **not intended for structural design**.
         """
     )
 
