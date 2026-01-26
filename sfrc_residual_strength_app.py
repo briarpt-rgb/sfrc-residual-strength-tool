@@ -311,11 +311,11 @@ else:
     st.subheader("Characteristic and design values")
 
     st.markdown(r"### $f_{R,1}$")
-    st.latex(r"f_{R,1k} = 0.67\, f_{R,1}^{\mathrm{pred}}\qquad f_{R,1d} = 0.49\, f_{R,1}^{\mathrm{pred}}")
+    st.latex(r"f_{R,1k} = 0.67\, f_{R,1m}^{\mathrm{pred}}\qquad f_{R,1d} = 0.49\, f_{R,1m}^{\mathrm{pred}}")
     st.latex(r"\gamma_{fR,1} = 1.36")
 
     st.markdown(r"### $f_{R,3}$")
-    st.latex(r"f_{R,3k} = 0.62\, f_{R,3}^{\mathrm{pred}}\qquad f_{R,3d} = 0.43\, f_{R,3}^{\mathrm{pred}}")
+    st.latex(r"f_{R,3k} = 0.62\, f_{R,3m}^{\mathrm{pred}}\qquad f_{R,3d} = 0.43\, f_{R,3m}^{\mathrm{pred}}")
     st.latex(r"\gamma_{fR,3} = 1.45")
 
     st.subheader("Input formats")
